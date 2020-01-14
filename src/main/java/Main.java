@@ -28,7 +28,7 @@ public class Main {
 
         ChromeOptions cOptions = new ChromeOptions();
         System.setProperty("webdriver.chrome.driver", "chromedriver");
-        //cOptions.addArguments("--headless");
+        cOptions.addArguments("--headless");
         ChromeDriver driver = new ChromeDriver(cOptions);
 
         Integer i = 0;
@@ -36,8 +36,8 @@ public class Main {
       //  FileLogger logHandler = new FileLogger("eyes_test3D.log", false, true);
       //  eyes.setLogHandler(logHandler);
 
-        BatchInfo batchInfo = new BatchInfo("MemTest VG 99");
-        batchInfo.setId("VGMEMTEST99");
+        BatchInfo batchInfo = new BatchInfo("MemTest VG 98");
+        batchInfo.setId("VGMEMTEST98");
 
         renderConfig
                 .addBrowser(1400, 600, BrowserType.CHROME)
@@ -65,9 +65,9 @@ public class Main {
                 eyes.open(driver);
 
                 // driver.get("http://localhost/~christopheremerson/simple.html");
-                // driver.get("https://www.gore.com/");
+                 driver.get("https://www.gore.com/");
                 // driver.get("http://localhost/~christopheremerson/large.html");
-                driver.get("https://techcrunch.com/");
+                // driver.get("https://techcrunch.com/");
 
                 eyes.checkWindow("test");
                 //eyes.check("Test", Target.window());
