@@ -70,7 +70,7 @@ public class Main {
                 // driver.get("https://techcrunch.com/");
 
                 eyes.checkWindow("test");
-                //eyes.check("Test", Target.window());
+                //eyes.check("Test", Target.window());  // iCheckSettign error with fluent, may be my machine or config
 
                 TestResults testResult = eyes.close(false);
                 //System.out.println(allTestResults);
