@@ -8,9 +8,11 @@ import com.applitools.eyes.visualgrid.services.VisualGridRunner;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Random;
 
 
 public class Main {
@@ -23,61 +25,92 @@ public class Main {
 
     private void testVG(){
 
-        EyesRunner visualGridRunner = new VisualGridRunner(10);
+        EyesRunner visualGridRunner = new VisualGridRunner(100);
         Configuration renderConfig = new Configuration();
 
         ChromeOptions cOptions = new ChromeOptions();
-        System.setProperty("webdriver.chrome.driver", "chromedriver");
+        //System.setProperty("webdriver.chrome.driver", "chromedriver");
         cOptions.addArguments("--headless");
         ChromeDriver driver = new ChromeDriver(cOptions);
 
-        Integer i = 0;
+        int i = 0;
+        int randNum = getRand();
+        long before;
+        long startloop;
 
-      //  FileLogger logHandler = new FileLogger("eyes_test3D.log", false, true);
-      //  eyes.setLogHandler(logHandler);
 
-        BatchInfo batchInfo = new BatchInfo("MemTest VG 98");
-        batchInfo.setId("VGMEMTEST98");
+
+
+        BatchInfo batchInfo = new BatchInfo("MemTest VG" + randNum);
+        batchInfo.setId("VGMEMTEST" + randNum);
 
         renderConfig
                 .addBrowser(1400, 600, BrowserType.CHROME)
                 .addBrowser(1400, 600, BrowserType.FIREFOX)
+                .addBrowser(600, 600, BrowserType.EDGE)
+                .addBrowser(1600, 600, BrowserType.EDGE)
+
+                .addBrowser(600, 600, BrowserType.IE_10)
+                .addBrowser(1600, 600, BrowserType.IE_10)
+
+                .addBrowser(600, 600, BrowserType.IE_11)
+                .addBrowser(1600, 600, BrowserType.IE_11)
+
+                .addBrowser(1200 ,600, BrowserType.SAFARI)
+
                 .setAppName("MemTest")
-                .setServerUrl("https://eyes.applitools.com")
+                .setServerUrl("https://eyesapi.applitools.com")
                 .setBatch(batchInfo)
-                .setMatchLevel(MatchLevel.LAYOUT2)
-                .setSendDom(false)
+                .setMatchLevel(MatchLevel.STRICT)
+                .setSendDom(true)
                 .setApiKey(System.getenv("APPLITOOLS_API_KEY"));
 
         Eyes eyes = new Eyes(visualGridRunner);
         eyes.setMatchLevel(MatchLevel.LAYOUT2);
 
+        FileLogger logHandler = new FileLogger("eyes_test.log", false, true);
+        eyes.setLogHandler(logHandler);
+
+        System.out.println("API KEY: " + eyes.getApiKey());
+        startloop = System.currentTimeMillis();
+
         try {
 
-            for(i=0;i<100;i++) {
+            for(i=0;i<10;i++) {
 
+                eyes.getLogger().log("************************* ITERATION " + String.format("%03d",(i+1)));
                 Date date = new Date();
                 System.out.println(new Timestamp(date.getTime()) + ": Iteration " + (i+1));
+                before = System.currentTimeMillis();
 
                 renderConfig.setTestName("Memtest " + String.format("%03d",(i+1)));
                 eyes.setConfiguration(renderConfig);
 
                 eyes.open(driver);
 
-                // driver.get("http://localhost/~christopheremerson/simple.html");
-                 driver.get("https://www.gore.com/");
-                // driver.get("http://localhost/~christopheremerson/large.html");
-                // driver.get("https://techcrunch.com/");
+                driver.get("https://wikipedia.com/");
+                eyes.check("Test 1", com.applitools.eyes.selenium.fluent.Target.window().fully());
 
-                eyes.checkWindow("test");
-                //eyes.check("Test", Target.window());  // iCheckSettign error with fluent, may be my machine or config
+                driver.get("https://www.collegeatlas.org");
+                eyes.check("Test 2", com.applitools.eyes.selenium.fluent.Target.window().fully());
 
-                TestResults testResult = eyes.close(false);
-                //System.out.println(allTestResults);
+                driver.get("https://www.seia.org/");
+                eyes.check("Test 3", com.applitools.eyes.selenium.fluent.Target.window().fully());
+
+                driver.get("https://www.seia.org/about");
+                eyes.check("Test 4", com.applitools.eyes.selenium.fluent.Target.window().fully());
+
+
+                eyes.closeAsync();
+
+                System.out.println("Completed Rendering in " + ((System.currentTimeMillis() - before)) / 1000 + " seconds");
                 showMemory();
             }
 
             driver.quit();
+
+            TestResultsSummary allTestResults = visualGridRunner.getAllTestResults(false);
+            System.out.println("Completed all in " + ((System.currentTimeMillis() - startloop)) / 1000 + " seconds");
 
         } catch (Exception e) {
             eyes.abortIfNotClosed();
@@ -109,7 +142,7 @@ public class Main {
 
         try {
 
-            for(i=0;i<1000;i++) {
+            for(i=0;i<3;i++) {
                 System.out.println("**** Iteration " + (i+1) + " ****");
 
                 eyes.open(driver, "Memtest", "Memtest " + String.format("%03d",(i+1)), new RectangleSize(1200, 800));
@@ -117,8 +150,10 @@ public class Main {
                 //driver.get("http://localhost/~christopheremerson/simple.html");
                 driver.get("https://www.gore.com/");
 
-                eyes.checkWindow("test");
-                //eyes.check("test", Target.window().fully());
+               // eyes.checkWindow("test");
+
+                eyes.check("test", Target.window().fully());
+
                 eyes.close(false);
                 //TestResultsSummary allTestResults = runner.getAllTestResults();
                 //System.out.println(allTestResults);
@@ -147,6 +182,12 @@ public class Main {
         System.out.println("Heap : " + totalMemory);
         System.out.println("Max  : " + maxMemory);
 
+    }
+
+    private static int getRand(){
+        Random rand = new Random();
+        int randNum = rand.nextInt(10000);
+        return randNum;
     }
 }
 
