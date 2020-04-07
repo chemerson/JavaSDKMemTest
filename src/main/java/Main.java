@@ -39,8 +39,6 @@ public class Main {
         long startloop;
 
 
-
-
         BatchInfo batchInfo = new BatchInfo("MemTest VG" + randNum);
         batchInfo.setId("VGMEMTEST" + randNum);
 
@@ -76,7 +74,7 @@ public class Main {
 
         try {
 
-            for(i=0;i<10;i++) {
+            for(i=0;i<200;i++) {
 
                 eyes.getLogger().log("************************* ITERATION " + String.format("%03d",(i+1)));
                 Date date = new Date();
